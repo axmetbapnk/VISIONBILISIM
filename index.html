@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="tr" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VİSİON Bilişim Teknolojileri A.Ş. | Kurumsal B2B Ticaret ve Teklif Portalı</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#070A10',
+                            card: '#0F172A',
+                            border: '#1E293B',
+                            cyan: '#00F2FE',
+                            blue: '#0052D4',
+                            neon: '#00D2FF',
+                            purple: '#7F00FF',
+                            accent: '#38BDF8'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #070A10;
+            color: #F1F5F9;
+            overflow-x: hidden;
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Neon Glows */
+        .glow-cyan {
+            box-shadow: 0 0 25px -5px rgba(0, 210, 255, 0.35);
+        }
+        .glow-purple {
+            box-shadow: 0 0 25px -5px rgba(127, 0, 255, 0.35);
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(0, 210, 255, 0.4);
+            transform: translateY(-4px);
+        }
+
+        /* Background Grid */
+        .bg-grid-pattern {
+            background-size: 36px 36px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070A10;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E293B;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00D2FF;
+        }
+
+        /* Floating Badge Animation */
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.03); }
+        }
+        .animate-pulse-glow {
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-[#070A10] text-slate-100 antialiased selection:bg-cyan-500 selection:text-black">
+
+    <!-- ANNOUNCEMENT BAR -->
+    <div class="bg-gradient-to-r from-slate-900 via-cyan-950/60 to-slate-900 text-xs py-2 px-4 border-b border-slate-800 text-slate-300">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <span class="flex h-2 w-2 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                </span>
+                <span class="font-medium text-slate-200">VİSİON B2B Portal: <span class="text-cyan-400 font-semibold">Kurumsal Cari Hesap & Hızlı Teklif Altyapısı Aktif</span></span>
+            </div>
+            <div class="flex items-center space-x-6">
+                <!-- Currency Selector -->
+                <div class="flex items-center space-x-1 bg-slate-950 px-2 py-1 rounded border border-slate-800 text-[11px]">
+                    <span class="text-slate-400">Para Birimi:</span>
+                    <button onclick="setCurrency('TRY')" id="curr-TRY" class="px-1.5 py-0.5 rounded font-bold text-cyan-400 bg-slate-800">TRY (₺)</button>
+                    <button onclick="setCurrency('USD')" id="curr-USD" class="px-1.5 py-0.5 rounded text-slate-400 hover:text-white">USD ($)</button>
+                    <button onclick="setCurrency('EUR')" id="curr-EUR" class="px-1.5 py-0.5 rounded text-slate-400 hover:text-white">EUR (€)</button>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="tel:+902128900000" class="hover:text-cyan-400 flex items-center gap-1"><i data-lucide="phone" class="w-3.5 h-3.5 text-cyan-400"></i> +90 (212) 890 00 00</a>
+                    <span class="text-slate-700">|</span>
+                    <button onclick="switchView('tracking')" class="hover:text-cyan-400 flex items-center gap-1"><i data-lucide="truck" class="w-3.5 h-3.5 text-cyan-400"></i> Teklif/Sipariş Takibi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN NAVIGATION BAR -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-slate-800/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" onclick="switchView('store')" class="flex items-center space-x-3 group">
+                <div class="relative w-11 h-11 flex items-center justify-center">
+                    <svg viewBox="0 0 100 100" class="w-full h-full text-cyan-400 group-hover:scale-105 transition-transform duration-300">
+                        <defs>
+                            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#00D2FF" />
+                                <stop offset="50%" stop-color="#0052D4" />
+                                <stop offset="100%" stop-color="#7F00FF" />
+                            </linearGradient>
+                        </defs>
+                        <polygon points="50,5 90,27.5 90,72.5 50,95 10,72.5 10,27.5" fill="none" stroke="url(#logoGrad)" stroke-width="3.5" />
+                        <path d="M50 8 L50 25 M30 18 L40 28 M70 18 L60 28 M50 92 L50 75 M30 82 L40 72 M70 82 L60 72" stroke="url(#logoGrad)" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="50" cy="8" r="2.5" fill="#00D2FF"/>
+                        <circle cx="30" cy="18" r="2.5" fill="#00D2FF"/>
+                        <circle cx="70" cy="18" r="2.5" fill="#00D2FF"/>
+                        <circle cx="50" cy="92" r="2.5" fill="#7F00FF"/>
+                        <path d="M30 35 L50 70 L70 35 L58 35 L50 52 L42 35 Z" fill="url(#logoGrad)" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="text-xl font-extrabold tracking-wider bg-gradient-to-r from-white via-slate-100 to-cyan-300 bg-clip-text text-transparent">
+                        VİSİON
+                    </div>
+                    <div class="text-[9px] tracking-widest text-slate-400 font-semibold uppercase">
+                        Bilişim Teknolojileri A.Ş.
+                    </div>
+                </div>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="hidden lg:flex items-center space-x-8 text-sm font-medium">
+                <button onclick="switchView('store')" id="nav-store" class="text-cyan-400 font-semibold transition-colors flex items-center gap-1.5">
+                    <i data-lucide="shopping-bag" class="w-4 h-4"></i> B2B Kataloğu
+                </button>
+                <button onclick="switchView('services')" id="nav-services" class="text-slate-300 hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i> Hizmetler & Çözümler
+                </button>
+                <button onclick="switchView('portal')" id="nav-portal" class="text-slate-300 hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                    <i data-lucide="user-check" class="w-4 h-4"></i> Cari Hesap Paneli
+                </button>
+                <button onclick="switchView('tracking')" id="nav-tracking" class="text-slate-300 hover:text-cyan-400 transition-colors flex items-center gap-1.5">
+                    <i data-lucide="search" class="w-4 h-4"></i> Teklif Sorgula
+                </button>
+            </nav>
+
+            <!-- Actions & Cart Drawer Trigger -->
+            <div class="flex items-center space-x-4">
+                <!-- Cart Button -->
+                <button onclick="toggleCartDrawer()" class="relative p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-200 hover:border-cyan-400/50 transition-all">
+                    <i data-lucide="shopping-cart" class="w-5 h-5 text-cyan-400"></i>
+                    <span id="cart-badge" class="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-cyan-500 text-slate-950 font-bold text-xs flex items-center justify-center border-2 border-slate-950">0</span>
+                </button>
+
+                <!-- Admin Console Button -->
+                <button onclick="switchView('admin')" class="hidden sm:inline-flex items-center justify-center px-3.5 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-purple-900/60 to-slate-900 text-purple-300 border border-purple-500/30 hover:border-purple-400 transition-all gap-2">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 text-purple-400"></i>
+                    Backoffice Panel
+                </button>
+
+                <!-- Mobile Hamburger -->
+                <button onclick="toggleMobileMenu()" class="lg:hidden p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Nav Menu -->
+        <div id="mobileMenu" class="hidden lg:hidden border-t border-slate-800 bg-slate-950/95 px-6 py-4 space-y-3">
+            <button onclick="switchView('store'); toggleMobileMenu();" class="block w-full text-left text-cyan-400 font-semibold py-2">B2B Kataloğu</button>
+            <button onclick="switchView('services'); toggleMobileMenu();" class="block w-full text-left text-slate-300 py-2">Hizmetler & Çözümler</button>
+            <button onclick="switchView('portal'); toggleMobileMenu();" class="block w-full text-left text-slate-300 py-2">Cari Hesap Paneli</button>
+            <button onclick="switchView('tracking'); toggleMobileMenu();" class="block w-full text-left text-slate-300 py-2">Sipariş & Teklif Takibi</button>
+            <button onclick="switchView('admin'); toggleMobileMenu();" class="block w-full text-left text-purple-400 font-semibold py-2">Yönetim Konsolu (Admin)</button>
+        </div>
+    </header>
+
+    <!-- MAIN VIEW CONTAINER -->
+    <main id="main-content">
+
+        <!-- VIEW 1: B2B CATALOG & E-COMMERCE -->
+        <section id="view-store" class="block">
+            
+            <!-- HERO BANNER -->
+            <div class="relative py-16 lg:py-24 overflow-hidden border-b border-slate-800/80 bg-grid-pattern">
+                <div class="absolute top-1/2 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full filter blur-[120px] pointer-events-none"></div>
+                <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full filter blur-[120px] pointer-events-none"></div>
+
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="grid lg:grid-cols-12 gap-8 items-center">
+                        <div class="lg:col-span-8 space-y-6">
+                            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 text-xs font-semibold backdrop-blur-md">
+                                <i data-lucide="server" class="w-3.5 h-3.5"></i>
+                                <span>Kurumsal Donanım, Ağ Teknolojileri & Siber Güvenlik Çözümleri</span>
+                            </div>
+                            <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+                                Yüksek Performanslı <br/>
+                                <span class="bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent">
+                                    B2B Bilişim Altyapısı
+                                </span> & Tedarik Portalı
+                            </h1>
+                            <p class="text-slate-400 text-base sm:text-lg max-w-2xl font-normal leading-relaxed">
+                                Kurumsal sunuculardan, Cisco/Fortinet ağ donanımlarına, sızma testi hizmetlerinden bulut mimarilerine kadar şirketinizin ihtiyaç duyduğu tüm bilişim sistemlerini doğrudan cari hesabınızla veya kurumsal teklif alarak sipariş edin.
+                            </p>
+                            <div class="flex flex-wrap gap-4 pt-2">
+                                <a href="#catalog-section" class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-sm shadow-lg shadow-cyan-500/20 flex items-center gap-2">
+                                    <i data-lucide="grid" class="w-4 h-4"></i> Kataloğu İnceleyin
+                                </a>
+                                <button onclick="openCustomRfqModal()" class="px-6 py-3.5 rounded-xl glass-card text-cyan-300 border-cyan-500/30 font-semibold text-sm hover:border-cyan-400 flex items-center gap-2">
+                                    <i data-lucide="file-text" class="w-4 h-4"></i> Özel Şartname / Toplu Teklif İste
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Hero Live Stats Card -->
+                        <div class="lg:col-span-4 hidden lg:block">
+                            <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4 glow-cyan">
+                                <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                                    <span class="text-xs font-mono text-cyan-400">B2B STOK STATUS</span>
+                                    <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-slate-400">Stokta Bulunan Ürün:</span>
+                                        <span class="font-bold text-white font-mono">2,480+ Parça</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-slate-400">Aynı Gün Sevkiyat:</span>
+                                        <span class="font-bold text-emerald-400 font-mono">Saat 16:00'ya kadar</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-sm">
+                                        <span class="text-slate-400">Kurumsal Garanti:</span>
+                                        <span class="font-bold text-white">3 Yıl Birebir Değişim</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-xs text-slate-400 flex items-center gap-2">
+                                    <i data-lucide="shield-check" class="w-4 h-4 text-cyan-400 shrink-0"></i>
+                                    <span>Tüm siparişlerde ISO 27001 ve Sanayi Bakanlığı Onaylı Garanti Belgesi.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- B2B PRODUCT CATALOG SECTION -->
+            <div id="catalog-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                
+                <!-- Filters & Search Toolbar -->
+                <div class="glass-panel p-6 rounded-2xl border border-slate-800 mb-10 space-y-6">
+                    <div class="flex flex-col lg:flex-row gap-4 justify-between items-center">
+                        
+                        <!-- Search Bar -->
+                        <div class="relative w-full lg:w-96">
+                            <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400"></i>
+                            <input type="text" id="searchInput" oninput="renderProducts()" placeholder="Ürün adı, kod veya marka ara (Örn: Fortinet, Cisco)..." class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-100 focus:outline-none focus:border-cyan-400">
+                        </div>
+
+                        <!-- Category Tabs -->
+                        <div class="flex flex-wrap gap-2 w-full lg:w-auto overflow-x-auto pb-2 lg:pb-0">
+                            <button onclick="setCategory('Hepsi')" class="cat-btn active px-4 py-2 rounded-xl text-xs font-semibold bg-cyan-500 text-slate-950 transition-all">Tümü</button>
+                            <button onclick="setCategory('Ağ Teknolojileri')" class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition-all">Ağ Teknolojileri</button>
+                            <button onclick="setCategory('Siber Güvenlik')" class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition-all">Siber Güvenlik</button>
+                            <button onclick="setCategory('Yazılım & Bulut')" class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition-all">Yazılım & Bulut</button>
+                            <button onclick="setCategory('Donanım & Sunucu')" class="cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition-all">Donanım & Sunucu</button>
+                        </div>
+
+                        <!-- Sort & View Controls -->
+                        <div class="flex items-center gap-3 w-full sm:w-auto justify-between lg:justify-end">
+                            <select id="sortSelect" onchange="renderProducts()" class="px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-300 focus:outline-none focus:border-cyan-400">
+                                <option value="default">Sıralama: Öne Çıkanlar</option>
+                                <option value="price-asc">Fiyat: Düşükten Yükseğe</option>
+                                <option value="price-desc">Fiyat: Yüksekten Düşüğe</option>
+                                <option value="name">Ürün Adı (A-Z)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Grid -->
+                <div id="productGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- JavaScript will inject cards here -->
+                </div>
+
+            </div>
+        </section>
+
+        <!-- VIEW 2: HİZMETLER & ÇÖZÜMLER (SERVICES) -->
+        <section id="view-services" class="hidden py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                <span class="text-cyan-400 text-xs font-bold uppercase tracking-widest bg-cyan-950/60 border border-cyan-800/50 px-3 py-1 rounded-full">Uzmanlık Alanlarımız</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Kurumsal Bilişim Hizmetleri & Mühendislik</h2>
+                <p class="text-slate-400 text-sm">VİSİON A.Ş. sertifikalı uzman kadrosuyla şirketinizin tüm bilişim mimarisini uçtan uca tasarlar, kurar ve 7/24 yönetir.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass-panel p-8 rounded-2xl border border-slate-800 relative group">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-6 border border-cyan-500/30">
+                        <i data-lucide="shield-alert" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">7/24 SOC & Sızma Testi</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-6">
+                        Siber Operasyon Merkezimiz (SOC) ile sistemlerinizi kesintisiz izliyor, SIEM log analizi ve sızma (penetrasyon) testleriyle zafiyetleri kapatıyoruz.
+                    </p>
+                    <button onclick="openCustomRfqModal('7/24 SOC & Siber Güvenlik Hizmeti')" class="text-xs font-semibold text-cyan-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                        Teklif İste <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+
+                <div class="glass-panel p-8 rounded-2xl border border-slate-800 relative group">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center mb-6 border border-purple-500/30">
+                        <i data-lucide="cloud-rain" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">Kurumsal Bulut & Sanallaştırma</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-6">
+                        VMware, Nutanix ve Proxmox altyapılarında yüksek erişilebilirlikli private cloud kurulumları ve felaket kurtarma (Disaster Recovery) merkezleri.
+                    </p>
+                    <button onclick="openCustomRfqModal('Bulut & Sanallaştırma Hizmeti')" class="text-xs font-semibold text-purple-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                        Teklif İste <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+
+                <div class="glass-panel p-8 rounded-2xl border border-slate-800 relative group">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center mb-6 border border-blue-500/30">
+                        <i data-lucide="network" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-3">SD-WAN & Ağ Mimarisi</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed mb-6">
+                        Şubeler arası güvenli IPsec VPN, SD-WAN omurga kurulumları ve Cisco/Juniper/Aruba sertifikalı mühendislik danışmanlığı.
+                    </p>
+                    <button onclick="openCustomRfqModal('Ağ Mimari & SD-WAN Hizmeti')" class="text-xs font-semibold text-blue-400 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                        Teklif İste <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: CARİ HESAP & MÜŞTERİ PORTALI (CLIENT PORTAL) -->
+        <section id="view-portal" class="hidden py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                <div>
+                    <span class="text-cyan-400 text-xs font-mono">B2B MÜŞTERİ PANELİ</span>
+                    <h2 class="text-2xl font-extrabold text-white mt-1">Cari Hesap & Ekstre Özeti</h2>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs">
+                        <span class="text-slate-400">Cari Kodu:</span> <span class="font-mono text-cyan-400 font-bold">CR-884920</span>
+                    </div>
+                    <div class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs">
+                        <span class="text-slate-400">Firma:</span> <span class="text-white font-semibold">TÜRKER LOGISTICS A.Ş.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Portal KPI Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+                    <div class="text-xs text-slate-400 font-mono">ONAYLI CARİ LİMİT</div>
+                    <div class="text-xl font-bold text-white mt-1 font-mono">₺750,000.00</div>
+                    <div class="text-[10px] text-emerald-400 mt-1">Kullanılabilir: ₺520,400.00</div>
+                </div>
+
+                <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+                    <div class="text-xs text-slate-400 font-mono">GÜNCEL BAKIYE (BORÇ)</div>
+                    <div class="text-xl font-bold text-cyan-400 mt-1 font-mono">₺229,600.00</div>
+                    <div class="text-[10px] text-slate-400 mt-1">Son Ödeme: 15.11.2026</div>
+                </div>
+
+                <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+                    <div class="text-xs text-slate-400 font-mono">AKTİF TEKLİFLER</div>
+                    <div class="text-xl font-bold text-purple-400 mt-1 font-mono">2 Adet</div>
+                    <div class="text-[10px] text-slate-400 mt-1">Onay Bekleyen Şartname</div>
+                </div>
+
+                <div class="glass-panel p-5 rounded-2xl border border-slate-800">
+                    <div class="text-xs text-slate-400 font-mono">DESTEK BİLETİ</div>
+                    <div class="text-xl font-bold text-emerald-400 mt-1 font-mono">1 Açık</div>
+                    <div class="text-[10px] text-slate-400 mt-1">SLA Yanıt Süresi: 12 Dk</div>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="glass-panel rounded-2xl border border-slate-800 p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="file-spreadsheet" class="w-5 h-5 text-cyan-400"></i> Son Siparişler & Fatura Geçmişi
+                    </h3>
+                    <button onclick="downloadStatement()" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-300 hover:text-white flex items-center gap-1.5">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i> Cari Ekstre İndir (PDF)
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-950 text-slate-400 uppercase font-mono border-b border-slate-800">
+                            <tr>
+                                <th class="p-3">Sipariş / Teklif No</th>
+                                <th class="p-3">Tarih</th>
+                                <th class="p-3">Ürün / Hizmet Özeti</th>
+                                <th class="p-3">Tutar (KDV Dahil)</th>
+                                <th class="p-3">Ödeme Tipi</th>
+                                <th class="p-3">Durum</th>
+                                <th class="p-3 text-right">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="portalOrdersTable" class="divide-y divide-slate-800/60">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- VIEW 4: LIVE ORDER / RFQ TRACKER -->
+        <section id="view-tracking" class="hidden py-16 max-w-4xl mx-auto px-4">
+            <div class="glass-panel p-8 sm:p-12 rounded-3xl border border-slate-800 space-y-8 text-center">
+                <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center mx-auto">
+                    <i data-lucide="search-code" class="w-8 h-8"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Sipariş & Kurumsal Teklif Sorgulama</h2>
+                    <p class="text-slate-400 text-xs sm:text-sm mt-2">VİSİON A.Ş. tarafından tarafınıza iletilen VSN- ile başlayan 8 haneli referans kodunu giriniz.</p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
+                    <input type="text" id="trackCodeInput" placeholder="Örn: VSN-882910" class="flex-1 px-4 py-3 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm font-mono focus:outline-none focus:border-cyan-400 uppercase">
+                    <button onclick="trackOrder()" class="px-6 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-sm transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i> Sorgula
+                    </button>
+                </div>
+
+                <!-- Tracking Result Box -->
+                <div id="trackingResult" class="hidden text-left p-6 rounded-2xl bg-slate-950 border border-slate-800 space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                        <div>
+                            <span class="text-xs text-slate-400 font-mono">REFERANS KODU</span>
+                            <div class="text-base font-bold text-cyan-400 font-mono" id="resCode">VSN-882910</div>
+                        </div>
+                        <span id="resBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30">Hazırlanıyor</span>
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 gap-4 text-xs">
+                        <div>
+                            <span class="text-slate-400">Müşteri / Kurum:</span>
+                            <div class="text-white font-semibold mt-0.5" id="resCompany">Türker Logistics A.Ş.</div>
+                        </div>
+                        <div>
+                            <span class="text-slate-400">Teklif / Sipariş Tutarı:</span>
+                            <div class="text-emerald-400 font-bold font-mono mt-0.5" id="resAmount">₺148,500.00</div>
+                        </div>
+                    </div>
+
+                    <!-- Step Tracker Graphic -->
+                    <div class="pt-4 border-t border-slate-800 space-y-2">
+                        <span class="text-xs text-slate-400 font-mono">OPERASYON ADIMLARI</span>
+                        <div class="grid grid-cols-4 gap-2 text-center text-[10px]">
+                            <div class="p-2 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40">1. Onaylandı</div>
+                            <div class="p-2 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40">2. Stok Ayrıldı</div>
+                            <div class="p-2 rounded bg-slate-900 text-slate-500">3. Test & Kalite</div>
+                            <div class="p-2 rounded bg-slate-900 text-slate-500">4. Sevkiyat</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 5: ADMIN BACKOFFICE CONSOLE -->
+        <section id="view-admin" class="hidden py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-panel rounded-3xl border border-slate-800 p-6 lg:p-8 space-y-8">
+                
+                <!-- Admin Header -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-6">
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="w-3 h-3 rounded-full bg-purple-500 animate-pulse"></span>
+                            <span class="text-xs font-mono text-purple-400 font-bold">VİSİON BACKOFFICE EXECUTIVE PANEL V4.2</span>
+                        </div>
+                        <h2 class="text-2xl font-extrabold text-white mt-1">Yönetim & Satış Konsolu</h2>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="openAddProductModal()" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center gap-2">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i> Yeni B2B Ürün Ekle
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Admin KPI Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="p-5 rounded-2xl bg-slate-950 border border-slate-800">
+                        <div class="text-xs text-slate-400 font-mono">TOPLAM B2B SATIŞ (AYLIK)</div>
+                        <div class="text-2xl font-bold text-emerald-400 mt-1 font-mono">₺2,840,500</div>
+                        <div class="text-[10px] text-emerald-400 mt-1">↑ %18 Geçen Aya Göre</div>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-slate-950 border border-slate-800">
+                        <div class="text-xs text-slate-400 font-mono">BEKLEYEN TEKLİFLER</div>
+                        <div class="text-2xl font-bold text-amber-400 mt-1 font-mono" id="adminPendingQuoteCount">3 Adet</div>
+                        <div class="text-[10px] text-slate-400 mt-1">Aksiyon Bekliyor</div>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-slate-950 border border-slate-800">
+                        <div class="text-xs text-slate-400 font-mono">AKTİF CARİ MÜŞTERİ</div>
+                        <div class="text-2xl font-bold text-cyan-400 mt-1 font-mono">142 Şirket</div>
+                        <div class="text-[10px] text-slate-400 mt-1">Kurumsal Anlaşmalı</div>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-slate-950 border border-slate-800">
+                        <div class="text-xs text-slate-400 font-mono">SUNUCU UPTIME</div>
+                        <div class="text-2xl font-bold text-purple-400 mt-1 font-mono">%99.99</div>
+                        <div class="text-[10px] text-slate-400 mt-1">Tier III Datacenter</div>
+                    </div>
+                </div>
+
+                <!-- Admin Sales Analytics Chart -->
+                <div class="p-6 rounded-2xl bg-slate-950 border border-slate-800 space-y-4">
+                    <h4 class="text-xs font-bold font-mono text-slate-300 uppercase">Haftalık B2B Sipariş & Teklif Hacmi (₺)</h4>
+                    <div class="h-64 w-full">
+                        <canvas id="adminSalesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Admin Incoming Orders & RFQs List -->
+                <div class="space-y-4">
+                    <h3 class="text-base font-bold text-white flex items-center gap-2">
+                        <i data-lucide="inbox" class="w-5 h-5 text-purple-400"></i> Gelen Sipariş ve Teklif Talepleri
+                    </h3>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-950 text-slate-400 uppercase font-mono border-b border-slate-800">
+                                <tr>
+                                    <th class="p-3">Ref No</th>
+                                    <th class="p-3">Firma Ünvanı</th>
+                                    <th class="p-3">Ödeme Metodu</th>
+                                    <th class="p-3">Tutar</th>
+                                    <th class="p-3">Durum</th>
+                                    <th class="p-3 text-right">Yönetici Aksiyonu</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminOrdersTable" class="divide-y divide-slate-800/60">
+                                <!-- Populated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SHOPPING CART / RFQ BUILDER SIDEBAR DRAWER -->
+    <div id="cartDrawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-slate-950 border-l border-slate-800 transform translate-x-full transition-transform duration-300 ease-in-out shadow-2xl flex flex-col">
+        <div class="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="shopping-cart" class="w-5 h-5 text-cyan-400"></i>
+                <h3 class="font-bold text-white text-base">Sipariş & Teklif Sepeti</h3>
+            </div>
+            <button onclick="toggleCartDrawer()" class="text-slate-400 hover:text-white p-1">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <!-- Cart Items List -->
+        <div id="cartItemsList" class="flex-1 overflow-y-auto p-6 space-y-4">
+            <!-- Populated via JS -->
+        </div>
+
+        <!-- Cart Summary Footer -->
+        <div class="p-6 border-t border-slate-800 bg-slate-900/80 space-y-4">
+            <div class="space-y-1.5 text-xs text-slate-300">
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Ara Toplam:</span>
+                    <span id="cartSubtotal" class="font-mono">₺0.00</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Kurumsal KDV (%20):</span>
+                    <span id="cartVat" class="font-mono">₺0.00</span>
+                </div>
+                <div class="flex justify-between text-sm font-bold text-white pt-2 border-t border-slate-800">
+                    <span>Genel Toplam:</span>
+                    <span id="cartTotal" class="font-mono text-cyan-400">₺0.00</span>
+                </div>
+            </div>
+
+            <button onclick="openCheckoutModal()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-sm shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2">
+                <i data-lucide="file-check" class="w-4 h-4"></i> Teklifi / Siparişi Tamamla
+            </button>
+        </div>
+    </div>
+
+    <!-- PRODUCT DETAIL MODAL -->
+    <div id="productModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel border border-slate-800 rounded-3xl w-full max-w-2xl p-6 sm:p-8 space-y-6 relative overflow-hidden">
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+
+            <div class="grid sm:grid-cols-2 gap-6 items-center">
+                <div class="w-full aspect-square rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center p-6 relative">
+                    <div id="modalIcon" class="text-cyan-400"></div>
+                    <span id="modalCategoryBadge" class="absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">Kategori</span>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <span id="modalSku" class="text-[10px] font-mono text-slate-500">SKU-0000</span>
+                        <h3 id="modalTitle" class="text-xl font-bold text-white mt-1">Ürün Adı</h3>
+                    </div>
+
+                    <p id="modalDesc" class="text-xs text-slate-400 leading-relaxed">Ürün açıklaması burada yer alacak.</p>
+
+                    <div class="p-3 rounded-xl bg-slate-950 border border-slate-800 text-xs space-y-1">
+                        <div class="flex justify-between"><span class="text-slate-500">Stok Durumu:</span> <span id="modalStock" class="text-emerald-400 font-bold">Stokta Var</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Garanti:</span> <span class="text-white">3 Yıl Kurumsal</span></div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2">
+                        <div>
+                            <span class="text-[10px] text-slate-500 block">B2B Fiyatı (+KDV)</span>
+                            <span id="modalPrice" class="text-2xl font-bold text-cyan-400 font-mono">₺0.00</span>
+                        </div>
+                        <button id="modalAddBtn" class="px-5 py-3 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center gap-2">
+                            <i data-lucide="shopping-cart" class="w-4 h-4"></i> Sepete Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHECKOUT / B2B RFQ MODAL -->
+    <div id="checkoutModal" class="fixed inset-0 z-50 hidden bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+        <div class="glass-panel border border-slate-800 rounded-3xl w-full max-w-2xl p-6 sm:p-8 space-y-6 my-8">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+                <div>
+                    <span class="text-xs font-mono text-cyan-400">KURUMSAL TEKLİF & SİPARİŞ OLUŞTURUCU</span>
+                    <h3 class="text-xl font-bold text-white mt-0.5">Firma Bilgileri ve Ödeme Sebebi</h3>
+                </div>
+                <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <form onsubmit="processOrderSubmit(event)" class="space-y-4">
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Firma Tam Ünvanı *</label>
+                        <input type="text" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-cyan-400" placeholder="Örn: ABC Teknoloji A.Ş.">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Vergi Dairesi / Vergi No *</label>
+                        <input type="text" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-cyan-400" placeholder="Boğaziçi VD / 1234567890">
+                    </div>
+                </div>
+
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Yetkili E-Posta *</label>
+                        <input type="email" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-cyan-400" placeholder="satinalma@sirket.com">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">Telefon *</label>
+                        <input type="tel" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-cyan-400" placeholder="+90 532 000 00 00">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Ödeme Metodu Seçimi *</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <label class="p-3 rounded-xl bg-slate-950 border border-slate-800 flex flex-col items-center justify-center cursor-pointer hover:border-cyan-400">
+                            <input type="radio" name="paymentMethod" value="Cari Hesap (30 Gün Vadeli)" checked class="text-cyan-500">
+                            <span class="text-xs font-bold text-white mt-1">Cari Hesap</span>
+                            <span class="text-[9px] text-slate-500">30 Gün Vadeli</span>
+                        </label>
+                        <label class="p-3 rounded-xl bg-slate-950 border border-slate-800 flex flex-col items-center justify-center cursor-pointer hover:border-cyan-400">
+                            <input type="radio" name="paymentMethod" value="Havale / EFT" class="text-cyan-500">
+                            <span class="text-xs font-bold text-white mt-1">Havale / EFT</span>
+                            <span class="text-[9px] text-slate-500">%3 İskonto</span>
+                        </label>
+                        <label class="p-3 rounded-xl bg-slate-950 border border-slate-800 flex flex-col items-center justify-center cursor-pointer hover:border-cyan-400">
+                            <input type="radio" name="paymentMethod" value="Kurumsal Kredi Kartı" class="text-cyan-500">
+                            <span class="text-xs font-bold text-white mt-1">Kredi Kartı</span>
+                            <span class="text-[9px] text-slate-500">Taksit İmkanı</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 font-bold text-slate-950 text-sm hover:opacity-95 transition-all shadow-lg shadow-cyan-500/20">
+                    Siparişi Onayla ve Proforma Fatura Oluştur
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD PRODUCT MODAL FOR ADMIN -->
+    <div id="addProductModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass-panel border border-slate-800 rounded-3xl w-full max-w-lg p-6 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-bold text-white text-base">Yeni B2B Ürün / Hizmet Ekle</h3>
+                <button onclick="closeAddProductModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form onsubmit="handleAddProductSubmit(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Ürün Adı</label>
+                    <input id="newProdName" type="text" required class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Kategori</label>
+                        <select id="newProdCat" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white">
+                            <option>Ağ Teknolojileri</option>
+                            <option>Siber Güvenlik</option>
+                            <option>Yazılım & Bulut</option>
+                            <option>Donanım & Sunucu</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Fiyat (TRY)</label>
+                        <input id="newProdPrice" type="number" required class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Açıklama</label>
+                    <textarea id="newProdDesc" rows="2" class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white"></textarea>
+                </div>
+                <button type="submit" class="w-full py-2.5 rounded-xl bg-purple-600 font-bold text-white text-xs">Sisteme Kaydet</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- WHATSAPP QUICK SUPPORT FLOATING BUTTON -->
+    <a href="https://wa.me/902128900000" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 z-40 p-4 rounded-full bg-emerald-500 text-slate-950 shadow-xl hover:scale-110 transition-transform flex items-center justify-center glow-cyan" title="WhatsApp B2B Destek">
+        <i data-lucide="message-square" class="w-6 h-6 fill-current"></i>
+    </a>
+
+    <!-- APPLICATION JAVASCRIPT STATE & LOGIC -->
+    <script>
+        // --- DATA STATE ---
+        let currentCurrency = 'TRY';
+        const exchangeRates = { TRY: 1, USD: 0.029, EUR: 0.027 };
+        const currencySymbols = { TRY: '₺', USD: '$', EUR: '€' };
+
+        let products = [
+            {
+                id: 'VSN-101',
+                title: 'Fortinet FortiGate 60F Firewall Guard',
+                category: 'Siber Güvenlik',
+                priceTRY: 42500,
+                desc: '10x GE RJ45 port, Enterprise UTM siber güvenlik, SD-WAN entegrasyonlu donanımsal güvenlik duvarı.',
+                stock: 'Stokta Var (14 Adet)',
+                icon: 'shield-check'
+            },
+            {
+                id: 'VSN-102',
+                title: 'Cisco Catalyst 9300 48-Port PoE+ Switch',
+                category: 'Ağ Teknolojileri',
+                priceTRY: 118000,
+                desc: 'Layer 3 yönetilebilir gigabit anahtar, 437W PoE bütçesi, StackWise teknolojisi desteği.',
+                stock: 'Stokta Var (8 Adet)',
+                icon: 'network'
+            },
+            {
+                id: 'VSN-103',
+                title: 'Dell PowerEdge R750 2U Rack Sunucu',
+                category: 'Donanım & Sunucu',
+                priceTRY: 245000,
+                desc: '2x Intel Xeon Silver 4314, 128GB ECC RAM, 4x 1.92TB NVMe SSD, Çift Güç Kaynağı.',
+                stock: 'Stokta Var (3 Adet)',
+                icon: 'server'
+            },
+            {
+                id: 'VSN-104',
+                title: 'Kurumsal Sızma Testi & Pentest Paketi',
+                category: 'Siber Güvenlik',
+                priceTRY: 65000,
+                desc: 'ISO 27001 uyumlu Dış/İç Ağ penetrasyon testi, web uygulama zafiyet taraması ve raporlama.',
+                stock: 'Hizmet / Aktif',
+                icon: 'lock'
+            },
+            {
+                id: 'VSN-105',
+                title: 'VMware vSphere 8 Enterprise Plus Lisansı',
+                category: 'Yazılım & Bulut',
+                priceTRY: 88000,
+                desc: 'İki işlemci soketi için yıllık kurumsal sanallaştırma lisansı ve 7/24 Gold destek paketi.',
+                stock: 'Dijital Teslimat',
+                icon: 'cloud'
+            },
+            {
+                id: 'VSN-106',
+                title: 'APC Smart-UPS RT 10000VA 230V Kesintisiz Güç',
+                category: 'Donanım & Sunucu',
+                priceTRY: 135000,
+                desc: 'Sistem odası tipi On-Line çift çevrim KGK, RS-232 ve Network yönetim kartı dahil.',
+                stock: 'Stokta Var (5 Adet)',
+                icon: 'cpu'
+            }
+        ];
+
+        let cart = [];
+        let activeCategory = 'Hepsi';
+
+        let orders = [
+            {
+                refCode: 'VSN-882910',
+                company: 'Türker Logistics A.Ş.',
+                date: '24.10.2026',
+                summary: 'Cisco Catalyst 9300 Switch + Montaj',
+                totalTRY: 148500,
+                paymentMethod: 'Cari Hesap (30 Gün)',
+                status: 'Hazırlanıyor'
+            },
+            {
+                refCode: 'VSN-773104',
+                company: 'Türker Logistics A.Ş.',
+                date: '12.09.2026',
+                summary: 'Fortinet FortiGate 60F UTM',
+                totalTRY: 51000,
+                paymentMethod: 'Kurumsal Kredi Kartı',
+                status: 'Teslim Edildi'
+            }
+        ];
+
+        // --- NAVIGATION & VIEWS ---
+        function switchView(viewName) {
+            const views = ['store', 'services', 'portal', 'tracking', 'admin'];
+            views.forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.classList.add('hidden');
+
+                const navEl = document.getElementById(`nav-${v}`);
+                if (navEl) {
+                    navEl.classList.remove('text-cyan-400', 'font-semibold');
+                    navEl.classList.add('text-slate-300');
+                }
+            });
+
+            const activeEl = document.getElementById(`view-${viewName}`);
+            if (activeEl) activeEl.classList.remove('hidden');
+
+            const activeNav = document.getElementById(`nav-${viewName}`);
+            if (activeNav) {
+                activeNav.classList.add('text-cyan-400', 'font-semibold');
+                activeNav.classList.remove('text-slate-300');
+            }
+
+            if (viewName === 'portal') renderPortalTable();
+            if (viewName === 'admin') {
+                renderAdminTable();
+                initAdminChart();
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        }
+
+        // --- CURRENCY TOGGLE ---
+        function setCurrency(curr) {
+            currentCurrency = curr;
+            ['TRY', 'USD', 'EUR'].forEach(c => {
+                const btn = document.getElementById(`curr-${c}`);
+                if (c === curr) {
+                    btn.className = "px-1.5 py-0.5 rounded font-bold text-cyan-400 bg-slate-800";
+                } else {
+                    btn.className = "px-1.5 py-0.5 rounded text-slate-400 hover:text-white";
+                }
+            });
+            renderProducts();
+            renderCart();
+        }
+
+        function formatPrice(priceTRY) {
+            const converted = priceTRY * exchangeRates[currentCurrency];
+            const sym = currencySymbols[currentCurrency];
+            return `${sym}${converted.toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+
+        // --- PRODUCTS & FILTERING ---
+        function setCategory(cat) {
+            activeCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.innerText.includes(cat) || (cat === 'Hepsi' && btn.innerText === 'Tümü')) {
+                    btn.className = "cat-btn active px-4 py-2 rounded-xl text-xs font-semibold bg-cyan-500 text-slate-950 transition-all";
+                } else {
+                    btn.className = "cat-btn px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition-all";
+                }
+            });
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const container = document.getElementById('productGrid');
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+            const sortVal = document.getElementById('sortSelect').value;
+
+            let filtered = products.filter(p => {
+                const matchesCat = activeCategory === 'Hepsi' || p.category === activeCategory;
+                const matchesSearch = p.title.toLowerCase().includes(searchVal) || p.desc.toLowerCase().includes(searchVal);
+                return matchesCat && matchesSearch;
+            });
+
+            if (sortVal === 'price-asc') filtered.sort((a,b) => a.priceTRY - b.priceTRY);
+            if (sortVal === 'price-desc') filtered.sort((a,b) => b.priceTRY - a.priceTRY);
+            if (sortVal === 'name') filtered.sort((a,b) => a.title.localeCompare(b.title));
+
+            container.innerHTML = filtered.map(p => `
+                <div class="glass-card rounded-2xl p-5 border border-slate-800 flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950 text-slate-400 border border-slate-800">${p.id}</span>
+                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-medium">${p.category}</span>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-center text-cyan-400 my-2 group-hover:scale-110 transition-transform">
+                            <i data-lucide="${p.icon}" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="font-bold text-white text-sm line-clamp-2">${p.title}</h3>
+                        <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${p.desc}</p>
+                    </div>
+
+                    <div class="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-between">
+                        <div>
+                            <span class="text-[9px] text-slate-500 block">Kurumsal Fiyat</span>
+                            <span class="text-base font-bold text-cyan-400 font-mono">${formatPrice(p.priceTRY)}</span>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button onclick="openProductModal('${p.id}')" class="p-2 rounded-xl bg-slate-900 text-slate-300 hover:text-white border border-slate-800" title="Detay">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="addToCart('${p.id}')" class="px-3 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs flex items-center gap-1">
+                                <i data-lucide="plus" class="w-4 h-4"></i> Ekle
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // --- CART & RFQ DRAWER ---
+        function toggleCartDrawer() {
+            document.getElementById('cartDrawer').classList.toggle('translate-x-full');
+        }
+
+        function addToCart(prodId) {
+            const prod = products.find(p => p.id === prodId);
+            const existing = cart.find(c => c.id === prodId);
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({ ...prod, qty: 1 });
+            }
+            renderCart();
+            toggleCartDrawer();
+        }
+
+        function updateCartQty(prodId, delta) {
+            const item = cart.find(c => c.id === prodId);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) {
+                    cart = cart.filter(c => c.id !== prodId);
+                }
+            }
+            renderCart();
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cartItemsList');
+            const badge = document.getElementById('cart-badge');
+
+            const totalItems = cart.reduce((acc, i) => acc + i.qty, 0);
+            badge.innerText = totalItems;
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-slate-500 space-y-3">
+                        <i data-lucide="shopping-bag" class="w-12 h-12 mx-auto text-slate-700"></i>
+                        <p class="text-xs">Sepetinizde henüz ürün veya teklif kalemi yok.</p>
+                    </div>
+                `;
+                document.getElementById('cartSubtotal').innerText = formatPrice(0);
+                document.getElementById('cartVat').innerText = formatPrice(0);
+                document.getElementById('cartTotal').innerText = formatPrice(0);
+                lucide.createIcons();
+                return;
+            }
+
+            container.innerHTML = cart.map(item => `
+                <div class="p-3 rounded-xl bg-slate-900 border border-slate-800 flex justify-between items-center gap-3">
+                    <div class="flex-1">
+                        <h4 class="text-xs font-bold text-white line-clamp-1">${item.title}</h4>
+                        <span class="text-[10px] text-cyan-400 font-mono">${formatPrice(item.priceTRY)}</span>
+                    </div>
+                    <div class="flex items-center space-x-2 bg-slate-950 px-2 py-1 rounded border border-slate-800">
+                        <button onclick="updateCartQty('${item.id}', -1)" class="text-slate-400 hover:text-white font-bold text-xs">-</button>
+                        <span class="text-xs text-white font-mono font-bold">${item.qty}</span>
+                        <button onclick="updateCartQty('${item.id}', 1)" class="text-slate-400 hover:text-white font-bold text-xs">+</button>
+                    </div>
+                </div>
+            `).join('');
+
+            const subtotalTRY = cart.reduce((sum, i) => sum + (i.priceTRY * i.qty), 0);
+            const vatTRY = subtotalTRY * 0.20;
+            const totalTRY = subtotalTRY + vatTRY;
+
+            document.getElementById('cartSubtotal').innerText = formatPrice(subtotalTRY);
+            document.getElementById('cartVat').innerText = formatPrice(vatTRY);
+            document.getElementById('cartTotal').innerText = formatPrice(totalTRY);
+
+            lucide.createIcons();
+        }
+
+        // --- PRODUCT DETAIL MODAL ---
+        function openProductModal(prodId) {
+            const p = products.find(prod => prod.id === prodId);
+            if (!p) return;
+
+            document.getElementById('modalSku').innerText = p.id;
+            document.getElementById('modalTitle').innerText = p.title;
+            document.getElementById('modalCategoryBadge').innerText = p.category;
+            document.getElementById('modalDesc').innerText = p.desc;
+            document.getElementById('modalStock').innerText = p.stock;
+            document.getElementById('modalPrice').innerText = formatPrice(p.priceTRY);
+            document.getElementById('modalIcon').innerHTML = `<i data-lucide="${p.icon}" class="w-16 h-16"></i>`;
+            document.getElementById('modalAddBtn').onclick = () => { addToCart(p.id); closeProductModal(); };
+
+            document.getElementById('productModal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+
+        // --- CHECKOUT & RFQ SUBMISSION ---
+        function openCheckoutModal() {
+            if (cart.length === 0) {
+                alert("Lütfen önce sepetinize ürün ekleyiniz.");
+                return;
+            }
+            toggleCartDrawer();
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function openCustomRfqModal(serviceTitle) {
+            cart = [{
+                id: 'VSN-SRV-' + Math.floor(Math.random()*1000),
+                title: serviceTitle || 'Kurumsal Özel Şartname / Toplu Bilişim Altyapı Talebi',
+                category: 'Özel Hizmet',
+                priceTRY: 150000,
+                qty: 1
+            }];
+            renderCart();
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        function processOrderSubmit(e) {
+            e.preventDefault();
+            const refCode = 'VSN-' + Math.floor(100000 + Math.random() * 900000);
+            const subtotal = cart.reduce((s, i) => s + (i.priceTRY * i.qty), 0);
+            const total = subtotal * 1.20;
+
+            orders.unshift({
+                refCode: refCode,
+                company: 'Yeni B2B Müşterisi',
+                date: new Date().toLocaleDateString('tr-TR'),
+                summary: cart.map(i => i.title).join(', '),
+                totalTRY: total,
+                paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+                status: 'Onay Bekliyor'
+            });
+
+            cart = [];
+            renderCart();
+            closeCheckoutModal();
+
+            alert(`Siparişiniz ve Proforma Teklifiniz Başarıyla Oluşturuldu!\nReferans Kodu: ${refCode}`);
+            switchView('tracking');
+            document.getElementById('trackCodeInput').value = refCode;
+            trackOrder();
+        }
+
+        // --- TRACKING LOGIC ---
+        function trackOrder() {
+            const code = document.getElementById('trackCodeInput').value.trim().toUpperCase();
+            const found = orders.find(o => o.refCode === code);
+            const resBox = document.getElementById('trackingResult');
+
+            if (found) {
+                document.getElementById('resCode').innerText = found.refCode;
+                document.getElementById('resCompany').innerText = found.company;
+                document.getElementById('resAmount').innerText = formatPrice(found.totalTRY);
+                document.getElementById('resBadge').innerText = found.status;
+                resBox.classList.remove('hidden');
+            } else {
+                alert("Girdiğiniz referans koduyla eşleşen aktif kayıt bulunamadı.");
+                resBox.classList.add('hidden');
+            }
+        }
+
+        // --- CLIENT PORTAL & PDF SIMULATION ---
+        function renderPortalTable() {
+            const tbody = document.getElementById('portalOrdersTable');
+            tbody.innerHTML = orders.map(o => `
+                <tr class="hover:bg-slate-900/50">
+                    <td class="p-3 font-mono text-cyan-400 font-bold">${o.refCode}</td>
+                    <td class="p-3 text-slate-400">${o.date}</td>
+                    <td class="p-3 font-medium text-white max-w-xs truncate">${o.summary}</td>
+                    <td class="p-3 font-mono font-bold text-white">${formatPrice(o.totalTRY)}</td>
+                    <td class="p-3 text-slate-400">${o.paymentMethod}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">${o.status}</span></td>
+                    <td class="p-3 text-right">
+                        <button onclick="downloadStatement('${o.refCode}')" class="px-2.5 py-1 rounded bg-slate-800 text-slate-200 hover:text-cyan-400">Fatura PDF</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function downloadStatement(ref) {
+            alert(`[PDF İNDİRİLDİ]: VİSİON A.Ş. Kurumsal E-Fatura / Proforma (${ref || 'CARI-EKSTRE'}).pdf cihazınıza yüklendi.`);
+        }
+
+        // --- ADMIN BACKOFFICE CONSOLE ---
+        function renderAdminTable() {
+            const tbody = document.getElementById('adminOrdersTable');
+            document.getElementById('adminPendingQuoteCount').innerText = orders.filter(o => o.status === 'Onay Bekliyor' || o.status === 'Hazırlanıyor').length + ' Adet';
+
+            tbody.innerHTML = orders.map((o, idx) => `
+                <tr class="hover:bg-slate-900/50">
+                    <td class="p-3 font-mono text-purple-400 font-bold">${o.refCode}</td>
+                    <td class="p-3 text-white font-semibold">${o.company}</td>
+                    <td class="p-3 text-slate-400">${o.paymentMethod}</td>
+                    <td class="p-3 font-mono text-emerald-400 font-bold">${formatPrice(o.totalTRY)}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">${o.status}</span></td>
+                    <td class="p-3 text-right space-x-1">
+                        <button onclick="updateOrderStatus(${idx}, 'Onaylandı / Kargoda')" class="px-2 py-1 rounded bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-600">Onayla</button>
+                        <button onclick="updateOrderStatus(${idx}, 'İptal Edildi')" class="px-2 py-1 rounded bg-red-600/30 text-red-300 border border-red-500/30 hover:bg-red-600">Reddet</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateOrderStatus(idx, newStatus) {
+            orders[idx].status = newStatus;
+            renderAdminTable();
+        }
+
+        let adminChartInstance;
+        function initAdminChart() {
+            const ctx = document.getElementById('adminSalesChart').getContext('2d');
+            if (adminChartInstance) adminChartInstance.destroy();
+
+            adminChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'],
+                    datasets: [{
+                        label: 'Haftalık B2B Satış Hacmi (₺)',
+                        data: [320000, 480000, 290000, 650000, 810000, 290500],
+                        backgroundColor: '#7F00FF',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { color: '#1E293B' }, ticks: { color: '#94A3B8' } },
+                        y: { grid: { color: '#1E293B' }, ticks: { color: '#94A3B8' } }
+                    }
+                }
+            });
+        }
+
+        function openAddProductModal() { document.getElementById('addProductModal').classList.remove('hidden'); }
+        function closeAddProductModal() { document.getElementById('addProductModal').classList.add('hidden'); }
+
+        function handleAddProductSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('newProdName').value;
+            const cat = document.getElementById('newProdCat').value;
+            const price = parseFloat(document.getElementById('newProdPrice').value);
+            const desc = document.getElementById('newProdDesc').value;
+
+            products.unshift({
+                id: 'VSN-' + Math.floor(100 + Math.random()*900),
+                title: name,
+                category: cat,
+                priceTRY: price,
+                desc: desc || 'Yeni eklenen kurumsal ürün.',
+                stock: 'Stokta Var',
+                icon: 'cpu'
+            });
+
+            closeAddProductModal();
+            renderProducts();
+            alert("Yeni ürün B2B kataloğuna eklendi!");
+        }
+
+        // --- INIT ON LOAD ---
+        window.onload = function() {
+            renderProducts();
+            renderCart();
+            lucide.createIcons();
+        };
+    </script>
+</body>
+</html>
